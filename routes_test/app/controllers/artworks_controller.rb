@@ -1,15 +1,26 @@
 class ArtworksController < ApplicationController
   def index
-    render json: Artwork.all
+    user = params[:user_id]
+    if user
+      render json: Artwork.where("artworks.artist_id = #{user}") 
+      
+      #User.select("*").join(:artworks_shared)
+      #joins(:shared_viewers).
+      #joins(:shared_viewers).
+      #OR users.id = #{user}
 
-    params[:user_id]
+
+
+      #where(artist_id: user).or(Artwork.joins(:shared_viewers).where(shared_viewers: {user_id: user}))
+    else
+      render json: Artwork.all
+    end
   end
 
   def create
     artwork = Artwork.new(artwork_params)
     if artwork.save
-      render json: artwork,
-             status: :created
+      render json: artwork, status: :created
     else
       render json: artwork.errors.full_messages, status: :unprocessable_entity
     end
